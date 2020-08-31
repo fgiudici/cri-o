@@ -24,8 +24,8 @@ import (
 	"sync"
 
 	"github.com/pkg/errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"google.golang.org/old_grpc/codes"
+	"google.golang.org/old_grpc/status"
 )
 
 const (

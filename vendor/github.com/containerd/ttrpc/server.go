@@ -27,8 +27,8 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"google.golang.org/old_grpc/codes"
+	"google.golang.org/old_grpc/status"
 )
 
 var (

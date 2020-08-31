@@ -23,12 +23,12 @@ import (
 	"io"
 	"sync"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/internal/channelz"
-	"google.golang.org/grpc/internal/transport"
-	"google.golang.org/grpc/status"
+	"google.golang.org/old_grpc/balancer"
+	"google.golang.org/old_grpc/codes"
+	"google.golang.org/old_grpc/grpclog"
+	"google.golang.org/old_grpc/internal/channelz"
+	"google.golang.org/old_grpc/internal/transport"
+	"google.golang.org/old_grpc/status"
 )
 
 // pickerWrapper is a wrapper of balancer.Picker. It blocks on certain pick

@@ -25,8 +25,8 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/pkg/errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"google.golang.org/old_grpc/codes"
+	"google.golang.org/old_grpc/status"
 )
 
 type Method func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error)
