@@ -56,10 +56,13 @@ var (
 
 func (s *Server) getContainerInfo(id string, getContainerFunc, getInfraContainerFunc func(id string) *oci.Container, getSandboxFunc func(id string) *sandbox.Sandbox) (types.ContainerInfo, error) {
 	ctr := getContainerFunc(id)
+	fmt.Printf("*** getContainerInfo - ID:%v\n", id)
 	isInfra := false
 	if ctr == nil {
+		fmt.Print("\t is it infra?\n")
 		ctr = getInfraContainerFunc(id)
 		if ctr == nil {
+			fmt.Print("\t not FOUND!\n")
 			return types.ContainerInfo{}, errCtrNotFound
 		}
 		isInfra = true
@@ -90,12 +93,20 @@ func (s *Server) getContainerInfo(id string, getContainerFunc, getInfraContainer
 		// and pods share their network (whether it's host or pod level)
 		// we can return the pid of a running container in the pod.
 		for _, c := range sb.Containers().List() {
+			fmt.Printf("--- Container %v ---\n%v\n--- --- ---\n", c.Name(), c)
 			ctrPid, err := c.Pid()
 			if ctrPid > 0 && err == nil {
 				pidToReturn = ctrPid
 			}
 		}
 	}
+	fmt.Printf("== Name [%s] (is infra? %v)\n", ctr.Name(), isInfra)
+	fmt.Printf("   ID   [%v]\n", id)
+	fmt.Printf("   SdBox[%v]", ctr.Sandbox())
+	fmt.Printf("   Pid  [%v] --> [%v]\n", ctrState.Pid, pidToReturn)
+	fmt.Printf("   PidR [%v]\n", pidToReturn)
+	fmt.Printf("   Labels:\n   ==L== %v ==L==]\n", ctr.Labels())
+	fmt.Printf("   Annotations:\n   ==A== %v ==A==\n", ctr.Annotations())
 	return types.ContainerInfo{
 		Name:            ctr.Name(),
 		Pid:             pidToReturn,

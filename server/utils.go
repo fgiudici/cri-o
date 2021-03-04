@@ -147,7 +147,7 @@ func (s *Server) newPodNetwork(sb *sandbox.Sandbox) (ocicni.PodNetwork, error) {
 		Namespace: sb.Namespace(),
 		Networks:  []ocicni.NetAttachment{},
 		ID:        sb.ID(),
-		NetNS:     sb.NetNsPath(),
+		NetNS:     sb.NetNsPath(),  // this is what Peter would like to pass to cAdvisor!
 		RuntimeConfig: map[string]ocicni.RuntimeConfig{
 			network: {Bandwidth: bwConfig},
 		},

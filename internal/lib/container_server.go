@@ -295,6 +295,7 @@ func (c *ContainerServer) LoadSandbox(id string) (retErr error) {
 			}
 		}
 	} else {
+		fmt.Printf("*** NEW SPOOFED CNT ***\n\tcID:%v\n\tcname:%v\n\tid:%v\n\tlabels:%v\n", cID, cname, id, labels)
 		scontainer = oci.NewSpoofedContainer(cID, cname, labels, id, created, sandboxPath)
 	}
 

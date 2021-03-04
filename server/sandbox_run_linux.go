@@ -490,7 +490,7 @@ func (s *Server) runPodSandbox(ctx context.Context, req *types.RunPodSandboxRequ
 		return nil, err
 	}
 
-	// Add special container name label for the infra container
+	// Add special container name label for the infra container (!)
 	if labels != nil {
 		labels[kubeletTypes.KubernetesContainerNameLabel] = leaky.PodInfraContainerName
 	}
@@ -649,6 +649,7 @@ func (s *Server) runPodSandbox(ctx context.Context, req *types.RunPodSandboxRequ
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("\n[CGROUP]\n\tparent: [%v]\n\tpath: [%v]\n\terr: [%v]\n", cgroupParent, cgroupPath, err)
 	if cgroupPath != "" {
 		g.SetLinuxCgroupsPath(cgroupPath)
 	}
@@ -888,6 +889,7 @@ func (s *Server) runPodSandbox(ctx context.Context, req *types.RunPodSandboxRequ
 
 		container.SetSpec(g.Config)
 	} else {
+		fmt.Printf("*!* NEW SPOOFED CNT ***\n\tcID:%v\n\tcname:%v\n\tid:%v\n\tlabels:%v\n", sbox.ID(), containerName, sbox.ID(), labels)
 		log.Debugf(ctx, "dropping infra container for pod %s", sbox.ID())
 		container = oci.NewSpoofedContainer(sbox.ID(), containerName, labels, sbox.ID(), created, podContainer.RunDir)
 		g.AddAnnotation(ann.SpoofedContainer, "true")
