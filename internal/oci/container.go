@@ -14,6 +14,7 @@ import (
 
 	"github.com/containers/libpod/v2/pkg/cgroups"
 	"github.com/containers/storage/pkg/idtools"
+	"github.com/cri-o/cri-o/internal/config/cgmgr"
 	ann "github.com/cri-o/cri-o/pkg/annotations"
 	json "github.com/json-iterator/go"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
@@ -153,6 +154,27 @@ func NewSpoofedContainer(id, name string, labels map[string]string, sandbox stri
 		ann.SpoofedContainer: "true",
 	}
 	return c
+}
+
+// NewSpoofedContainerCgroup creates a child control cgroup based on the spoofed container id passed as parameter.
+// When a container is created, the OCI runtime is in charge to create the cgroup specified in the spec runtime.
+// CRI-O fills the spec runtime with the expected cgroup hierarchy (the parent cgroup created and passed by the kubelet
+// and the child cgroup made up by the CRI-O container ID) and relies on the runtime to actually create it.
+// cAdvisor collects the list of containers belonging to the pod by inspecting the cgroup tree directly. The, will query
+// CRI-O for each one of the container IDs he found there. We used the infra container to pass to cAdvisor POD level stats.
+// If we drop the infra container, we will not have the cgroup created (as we don't call anymore the runtime) and cAdvisor
+// will not collect our POD-level stats.
+// So, let's allow cAdvisor to ask us about the Spoofed Container and collect from it the POD stats.
+func NewSpoofedContainerCgroup(id string, cgroupParent string, cgroupMng cgmgr.CgroupManager) error {
+	cgroupAbsolutePath, err := cgroupMng.ContainerCgroupAbsolutePath(cgroupParent, id)
+	if err != nil {
+		return err
+	}
+	_, err = cgroups.New(cgroupAbsolutePath, &specs.LinuxResources{})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // SetSpec loads the OCI spec in the container struct

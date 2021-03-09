@@ -296,6 +296,9 @@ func (c *ContainerServer) LoadSandbox(id string) (retErr error) {
 		}
 	} else {
 		scontainer = oci.NewSpoofedContainer(cID, cname, labels, id, created, sandboxPath)
+		if err = oci.NewSpoofedContainerCgroup(id, m.Annotations[annotations.CgroupParent], c.config.CgroupManager()); err != nil {
+			logrus.Warn("could not create child cgroup for spoofed container %s: %v", id, err)
+		}
 	}
 
 	if err := c.ContainerStateFromDisk(scontainer); err != nil {
